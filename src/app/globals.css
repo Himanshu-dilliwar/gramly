@@ -2,32 +2,228 @@
 @tailwind components;
 @tailwind utilities;
 
-:root {
-  --foreground-rgb: 0, 0, 0;
-  --background-start-rgb: 214, 219, 220;
-  --background-end-rgb: 255, 255, 255;
-}
-
-@media (prefers-color-scheme: dark) {
+/* ---------- Design tokens & base layer ---------- */
+/* Keep H,S,L triplets (e.g. "240 10% 3.9%") so you can use hsl(var(--name)) */
+@layer base {
   :root {
-    --foreground-rgb: 255, 255, 255;
-    --background-start-rgb: 0, 0, 0;
-    --background-end-rgb: 0, 0, 0;
+    /* Core colors (H S% L%) */
+    --background: 0 0% 100%;
+    --foreground: 240 10% 3.9%;
+    --card: 0 0% 100%;
+    --card-foreground: 240 10% 3.9%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 240 10% 3.9%;
+    --primary: 240 5.9% 10%;
+    --primary-foreground: 0 0% 98%;
+    --secondary: 240 4.8% 95.9%;
+    --secondary-foreground: 240 5.9% 10%;
+    --muted: 240 4.8% 95.9%;
+    --muted-foreground: 240 3.8% 46.1%;
+    --accent: 240 4.8% 95.9%;
+    --accent-foreground: 240 5.9% 10%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 98%;
+
+    /* UI tokens */
+    --border: 240 5.9% 90%;
+    --input: 240 5.9% 90%;
+    --ring: 240 10% 3.9%;
+    --radius: 0.5rem;
+
+    /* Charts */
+    --chart-1: 12 76% 61%;
+    --chart-2: 173 58% 39%;
+    --chart-3: 197 37% 24%;
+    --chart-4: 43 74% 66%;
+    --chart-5: 27 87% 67%;
+
+    /* Sidebar tokens */
+    --sidebar-background: 0 0% 98%;
+    --sidebar-foreground: 240 5.3% 26.1%;
+    --sidebar-primary: 240 5.9% 10%;
+    --sidebar-primary-foreground: 0 0% 98%;
+    --sidebar-accent: 240 4.8% 95.9%;
+    --sidebar-accent-foreground: 240 5.9% 10%;
+    --sidebar-border: 220 13% 91%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    /* Misc */
+    --page-background: 255 100% 100%; /* H S% L% */
+    --scrollbar-track: transparent;
+    --scrollbar-thumb: 84 6% 33%; /* H S% L% triplet */
+    --scrollbar-thumb-hover: 86 6% 36%;
+    --scrollbar-width: 12px;
+  }
+
+  /* Dark mode overrides (add `class="dark"` on <html> or <body>) */
+  .dark {
+    --background: 240 10% 3.9%;
+    --foreground: 0 0% 98%;
+    --card: 240 10% 3.9%;
+    --card-foreground: 0 0% 98%;
+    --popover: 240 10% 3.9%;
+    --popover-foreground: 0 0% 98%;
+    --primary: 0 0% 98%;
+    --primary-foreground: 240 5.9% 10%;
+    --secondary: 240 3.7% 15.9%;
+    --secondary-foreground: 0 0% 98%;
+    --muted: 240 3.7% 15.9%;
+    --muted-foreground: 240 5% 64.9%;
+    --accent: 240 3.7% 15.9%;
+    --accent-foreground: 0 0% 98%;
+    --destructive: 0 62% 30.6%;
+    --destructive-foreground: 0 0% 98%;
+
+    --border: 240 3.7% 15.9%;
+    --input: 240 3.7% 15%;
+    --ring: 240 4% 83.9%;
+
+    --chart-1: 220 70% 58%;
+    --chart-2: 160 60% 45%;
+    --chart-3: 200 68% 50%;
+    --chart-4: 30 80% 55%;
+    --chart-5: 340 78% 65%;
+
+    --sidebar-primary: 224.3 76.3% 48%;
+    --sidebar-primary-foreground: 0 0% 100%;
+    --sidebar-accent: 248 3.7% 15.9%;
+    --sidebar-accent-foreground: 240 4.8% 95.9%;
+    --sidebar-border: 240 3.7% 15.9%;
+    --sidebar-ring: 217.2 91.2% 59.8%;
+
+    --page-background: 240 10% 3.9%;
+    --scrollbar-thumb: 28 3% 45%;
+    --scrollbar-thumb-hover: 28 4% 50%;
+  }
+
+  /* ---------- Base element styles ---------- */
+  html, body {
+    height: 100%;
+  }
+
+  body {
+    /* Use hsl(var(--...)) when variables are H,S,L triplets */
+    background-color: hsl(var(--background));
+    color: hsl(var(--foreground));
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    overscroll-behavior-y: none;
+
+    /* Font + layout resets */
+    font-family: 'Roboto', 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+  }
+
+  /* make sure pseudo elements inherit box-sizing */
+  *, *::before, *::after {
+    box-sizing: inherit;
+  }
+
+  /* Utility for Safari backdrop blur */
+  .backdrop-blur-safari {
+    -webkit-backdrop-filter: blur(5px);
+    backdrop-filter: blur(5px);
+  }
+
+  /* ---------- Scrollbar (Firefox + WebKit) ---------- */
+  /* Firefox */
+  html {
+    scrollbar-width: thin;
+    scrollbar-color: hsl(var(--scrollbar-thumb)) var(--scrollbar-track);
+  }
+
+  /* WebKit (Chrome, Edge, Safari) */
+  *::-webkit-scrollbar {
+    width: var(--scrollbar-width);
+    height: var(--scrollbar-width);
+  }
+
+  *::-webkit-scrollbar-track {
+    background: var(--scrollbar-track);
+  }
+
+  *::-webkit-scrollbar-thumb {
+    background: hsl(var(--scrollbar-thumb));
+    border-radius: calc(var(--scrollbar-width) / 2);
+    /* page-background is an H S% L% triplet, so use hsl(var(--page-background)) */
+    border: calc(var(--scrollbar-width) / 4) solid hsl(var(--page-background));
+  }
+
+  *::-webkit-scrollbar-thumb:hover {
+    background: hsl(var(--scrollbar-thumb-hover));
+  }
+
+  /* ---------- Radial gradients (utilities) ---------- */
+  .radial-gradient {
+    background-image: radial-gradient(
+      ellipse farthest-side,
+      rgba(51, 82, 204, 0.0815) 28%,
+      #09090b 100%
+    );
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .radial-gradient-pink {
+    background-image: radial-gradient(
+      circle at center,
+      rgba(148, 52, 230, 0.1) 10%,
+      transparent 50%
+    );
+    background-size: 70% 80%;
+    background-repeat: no-repeat;
+  }
+
+  .radial-gradient-automations {
+    background-image: radial-gradient(
+      circle at top left,
+      rgba(51, 82, 204, 0.05) 40%,
+      rgba(29,29,29,1) 60%
+    );
+    background-size: 40% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .radial-double-gradient-cards-top {
+    background-image: radial-gradient(
+      circle at top left,
+      rgba(51, 82, 204, 0.3) 50%,
+      transparent 70%
+    );
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
+  }
+
+  .radial-double-gradient-cards-bottom {
+    background-image: radial-gradient(
+      circle at bottom right,
+      rgba(51, 82, 204, 0.1) 50%,
+      transparent 70%
+    );
+    background-size: 100% 100%;
+    background-repeat: no-repeat;
   }
 }
 
-body {
-  color: rgb(var(--foreground-rgb));
-  background: linear-gradient(
-      to bottom,
-      transparent,
-      rgb(var(--background-end-rgb))
-    )
-    rgb(var(--background-start-rgb));
+/* ---------- Small helpers outside the @layer for global use ---------- */
+.skip-to-content {
+  position: absolute;
+  left: -9999px;
+  top: auto;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
 }
-
-@layer utilities {
-  .text-balance {
-    text-wrap: balance;
-  }
+.skip-to-content:focus {
+  left: 10px;
+  top: 10px;
+  width: auto;
+  height: auto;
+  padding: 8px 12px;
+  background: hsl(var(--card));
+  color: hsl(var(--foreground));
+  border-radius: 6px;
+  z-index: 9999;
 }
