@@ -7,3 +7,5 @@ const Page =  async(props: Props) => {
     <div>Page</div>
   )
 }
+
+export default Page
