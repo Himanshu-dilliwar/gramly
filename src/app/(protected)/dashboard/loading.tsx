@@ -1,4 +1,5 @@
-import Loder from '@/components/global/loder'
+
+import Loader from '@/components/global/loder'
 import React from 'react'
 
 type Props = {}
@@ -6,7 +7,7 @@ type Props = {}
 const Loading = (props: Props) => {
   return (
     <div className='h-screen flex justify-center items-center'>
-        <Loder state>...Loading</Loder>
+        <Loader state>...Loading</Loader>
     </div>
   )
 }

@@ -6,14 +6,14 @@ type Props = {
     state: boolean
     className?: string
     color?: string
-    children: React.ReactNode
+    children?: React.ReactNode
 }
 
-const Loder = ({className,color,state,children}: Props) => {
+const Loader = ({className,color,state,children}: Props) => {
   return state ? (
     <div className={cn(className)}><Spinner color={color}/></div>
   ):(
     children
   )
 }
-export default Loder
+export default Loader
