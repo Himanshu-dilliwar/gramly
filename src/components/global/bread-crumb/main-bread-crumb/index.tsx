@@ -1,6 +1,6 @@
 import { Page } from "@/constants/page";
 import React from "react";
-import PageLogo from "../page-logo";
+import PageLogo from "../../page-logo";
 
 type Props = {
   page: Page;
