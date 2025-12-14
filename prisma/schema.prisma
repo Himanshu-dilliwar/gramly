@@ -1,16 +1,11 @@
 
-// datasource db {
-//   provider = "postgresql"
-// }
 generator client {
   provider = "prisma-client-js"
-  output   = "../src/generated/prisma"
 }
+
 
 datasource db {
   provider = "postgresql"
-  // You might need to add your actual database URL here
-  // url      = env("DATABASE_URL") 
 }
 
 /* ========== Enums ========== */
