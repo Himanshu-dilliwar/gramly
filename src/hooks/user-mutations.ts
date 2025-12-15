@@ -1,29 +1,49 @@
-"use client";
+'use client'
 
-import { createAutomations } from "@/actions/automations";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { useRouter, useParams } from "next/navigation";
+import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query'
+import { toast } from 'sonner'
+import type { MutationKey } from '@tanstack/react-query'
 
-export const useCreateAutomation = () => {
-  const queryClient = useQueryClient();
-  const router = useRouter();
-  const params = useParams(); // gives slug
+/* ---------------- MUTATION WRAPPER ---------------- */
 
-  return useMutation({
-    mutationFn: createAutomations,
+export const useMutationData = (
+  mutationKey: MutationKey,
+  mutationFn: () => Promise<any>,
+  queryKey?: string,
+  onSuccess?: () => void
+) => {
+  const client = useQueryClient()
 
-    onSuccess: (res) => {
-      // 1️⃣ Refresh automation list
-      queryClient.invalidateQueries({
-        queryKey: ["user-automations"],
-      });
+  const { mutate, isPending } = useMutation({
+    mutationKey,
+    mutationFn,
+    onSuccess: (data) => {
+      onSuccess?.()
 
-      // 2️⃣ Redirect to new automation page
-      if (res?.success && res.data?.id) {
-        router.push(
-          `/dashboard/${params.slug}/${res.data.id}`
-        );
+      toast.success(
+        data?.status === 200 || data?.status === 201
+          ? 'Success'
+          : 'Something went wrong'
+      )
+    },
+    onSettled: async () => {
+      if (queryKey) {
+        await client.invalidateQueries({ queryKey: [queryKey] })
       }
     },
-  });
-};
+  })
+
+  return { mutate, isPending }
+}
+
+/* ---------------- MUTATION STATE READER ---------------- */
+
+export const useMutationDataState = (mutationKey: MutationKey) => {
+  return useMutationState({
+    filters: { mutationKey },
+    select: (mutation) => ({
+      variables: mutation.state.variables,
+      status: mutation.state.status,
+    }),
+  })
+}
