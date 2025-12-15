@@ -1,21 +1,27 @@
-import { Button } from '@/components/ui/button'
+"use client";
 
-import React from 'react'
-import Loader from '../loder'
-import { Activity } from 'lucide-react'
+import { Button } from "@/components/ui/button";
+import { Activity } from "lucide-react";
+import Loader from "../loder";
+import { useCreateAutomation } from "@/hooks/user-mutations";
 
-type Props = {}
+const CreateAutomation = () => {
+  const { mutate, isPending } = useCreateAutomation();
 
-const CreateAutomation = (props: Props) => {
-
-    //WIP:create a new automation on databse using mutate
-  return <Button className="lg:px-10 py-6 bg-gradient-to-br from-[#3352CC] to-[#1C2D70] hover:opacity-80  text-white font-medium rounded-full">
-    <Loader state={false}>
-        <Activity/>
-    <p className='lg:inline hidden'>Create an Automation</p>
-    </Loader>
+  return (
+    <Button
+      onClick={() => mutate()}
+      disabled={isPending}
+      className="lg:px-10 py-6 bg-gradient-to-br from-[#3352CC] to-[#1C2D70] text-white rounded-full"
+    >
+      <Loader state={isPending}>
+        <Activity />
+        <span className="lg:inline hidden ml-2">
+          Create an Automation
+        </span>
+      </Loader>
     </Button>
-  
-}
+  );
+};
 
-export default CreateAutomation
+export default CreateAutomation;
