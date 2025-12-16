@@ -1,20 +1,24 @@
 'use client'
 
-import { useMutation, useMutationState, useQueryClient } from '@tanstack/react-query'
+import {
+  useMutation,
+  useMutationState,
+  useQueryClient,
+  type MutationKey,
+} from '@tanstack/react-query'
 import { toast } from 'sonner'
-import type { MutationKey } from '@tanstack/react-query'
 
 /* ---------------- MUTATION WRAPPER ---------------- */
 
-export const useMutationData = (
+export function useMutationData<TVariables, TResponse extends { status?: number }>(
   mutationKey: MutationKey,
-  mutationFn: () => Promise<any>,
+  mutationFn: (variables: TVariables) => Promise<TResponse>,
   queryKey?: string,
   onSuccess?: () => void
-) => {
+) {
   const client = useQueryClient()
 
-  const { mutate, isPending } = useMutation({
+  const { mutate, isPending } = useMutation<TResponse, Error, TVariables>({
     mutationKey,
     mutationFn,
     onSuccess: (data) => {
@@ -38,12 +42,21 @@ export const useMutationData = (
 
 /* ---------------- MUTATION STATE READER ---------------- */
 
-export const useMutationDataState = (mutationKey: MutationKey) => {
-  return useMutationState({
-    filters: { mutationKey },
+export function useMutationDataState<TVariables>(
+  mutationKey: MutationKey
+) {
+  const mutations = useMutationState({
+    filters: { mutationKey, status: "pending" },
     select: (mutation) => ({
-      variables: mutation.state.variables,
+      variables: mutation.state.variables as TVariables | undefined,
       status: mutation.state.status,
     }),
   })
+
+  const latest = mutations.at(-1)
+
+  return {
+    latestVariable: latest?.variables,
+    status: latest?.status,
+  }
 }

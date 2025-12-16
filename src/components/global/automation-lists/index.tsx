@@ -13,6 +13,7 @@ import CreateAutomation from "../create-automation";
 const AutomationList = () => {
   const pathname = usePathname();
   const { data, isLoading } = useQueryAutomations();
+  console.log(data);
 
   /* ---------------- LOADING ---------------- */
   if (isLoading) {

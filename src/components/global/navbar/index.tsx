@@ -22,9 +22,6 @@ type Props = {
 const InfoBar = ({ slug }: Props) => {
   const { page } = usePaths();
 
-  // ✅ Debug (optional)
-  console.log("page:", page, "slug:", slug);
-
   return (
     <div className="flex flex-col">
       {/* TOP BAR */}

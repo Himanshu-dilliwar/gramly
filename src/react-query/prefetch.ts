@@ -1,4 +1,4 @@
-import { getAllAutomations } from "@/actions/automations";
+import { getAllAutomations, getAutomationInfo } from "@/actions/automations";
 import { onUserInfo } from "@/actions/user";
 import {
   QueryClient,
@@ -28,3 +28,14 @@ export const prefetchUserProfile = async (client: QueryClient) => {
 export const prefetchUserAutomations = async (client: QueryClient) => {
   return prefetch(client, getAllAutomations, ["user-automations"]);
 };
+
+
+export const prefetchUserAutomation = async (
+  client: QueryClient,
+  automationId: string
+) => {
+  await client.prefetchQuery({
+    queryKey: ["automation-info", automationId],
+    queryFn: () => getAutomationInfo(automationId),
+  })
+}
