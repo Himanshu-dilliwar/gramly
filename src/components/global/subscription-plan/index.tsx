@@ -1,13 +1,21 @@
-import React, { Children } from 'react'
+import { useQueryUser } from "@/hooks/user-queries"
+import React from "react"
 
-type Props = {}
+type Props = {
+  children: React.ReactNode
+  type: "PRO" | "FREE"
+}
 
-const SubscriptionPlans = ({ children }: { children: React.ReactNode }) => {
-  return (
-    <div className="flex flex-col flex-1">
-      {children}
-    </div>
-  );
-};
+const SubscriptionPlans = ({ children, type }: Props) => {
+  const { data, isLoading } = useQueryUser()
 
-export default SubscriptionPlans;
+  if (isLoading) return null
+
+  const plan = data?.data?.subscription?.plan
+
+  if (plan !== type) return null
+
+  return <>{children}</>
+}
+
+export default SubscriptionPlans

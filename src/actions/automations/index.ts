@@ -2,7 +2,7 @@
 
 import { CreateAutomationPayload } from '@/types/automation'
 import { onCurrentUser } from '../user'
-import { getAutomations,createAutomation, findAutomation } from './queries'
+import { getAutomations,createAutomation, findAutomation, addListener, addTrigger, addKeyword} from './queries'
 import { client } from '@/lib/prisma'
 
 export const createAutomations = async (payload:CreateAutomationPayload) => {
@@ -113,6 +113,95 @@ export const updateAutomationName = async (
     return {
       success: false,
       data: null,
+    }
+  }
+}
+
+export const saveListener = async (
+  automationId: string,
+  listener: "SMARTAI" | "MESSAGE",
+  prompt: string,
+  reply?: string
+) => {
+  await onCurrentUser()
+
+  try {
+    const created = await addListener(
+      automationId,
+      listener,
+      prompt,
+      reply
+    )
+
+    if(created)return {
+      success: true,
+      data: created,
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      success: false,
+      data: null,
+    }
+  }
+}
+
+
+type TriggerType = "COMMENT" | "DM"
+export const saveTrigger = async (
+  automationId: string,
+  triggers: TriggerType[]
+) => {
+  try {
+    await onCurrentUser()
+
+    await addTrigger(automationId, triggers)
+
+    return {
+      success: true,
+      status: 200,
+      message: "Trigger saved",
+    }
+  } catch (error) {
+    console.error(error)
+
+    return {
+      success: false,
+      status: 500,
+      message: "Oops! Something went wrong",
+    }
+  }
+}
+
+export const saveKeyword = async (
+  automationId: string,
+  keyword: string
+) => {
+  try {
+    await onCurrentUser()
+
+    if (!keyword.trim()) {
+      return {
+        success: false,
+        status: 400,
+        message: "Keyword cannot be empty",
+      }
+    }
+
+    await addKeyword(automationId, keyword.trim())
+
+    return {
+      success: true,
+      status: 200,
+      message: "Keyword added successfully",
+    }
+  } catch (error) {
+    console.error(error)
+
+    return {
+      success: false,
+      status: 500,
+      message: "Oops! Something went wrong",
     }
   }
 }

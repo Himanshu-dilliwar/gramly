@@ -95,3 +95,75 @@ export const updateAutomation = async (
     },
   })
 }
+
+export const addListener = async (
+  automationId: string,
+  listener: "SMARTAI" | "MESSAGE",
+  prompt: string,
+  reply?: string
+) => {
+  return await client.automation.update({
+    where: {
+      id: automationId,
+    },
+    data: {
+      listener: {
+        create: {
+          listener,
+          prompt,
+          commentReply: reply,
+        },
+      },
+    },
+  })
+}
+
+type TriggerType = "COMMENT" | "DM"
+
+export const addTrigger = async (
+  automationId: string,
+  triggers: TriggerType[]
+) => {
+  const uniqueTriggers = triggers.filter(
+  (value, index, self) => self.indexOf(value) === index
+)
+
+
+  if (uniqueTriggers.length === 0) {
+    return {
+      success: false,
+      message: "No triggers provided",
+    }
+  }
+
+  return await client.automation.update({
+    where: { id: automationId },
+    data: {
+      trigger: {
+        createMany: {
+          data: uniqueTriggers.map((type) => ({ type })),
+          skipDuplicates: true, // ✅ Prisma safety
+        },
+      },
+    },
+  })
+}
+
+export const addKeyword = async (
+  automationId: string,
+  keyword: string
+) => {
+  return await client.automation.update({
+    where: {
+      id: automationId,
+    },
+    data: {
+      keywords: {
+        create: {
+          word: keyword,
+        },
+      },
+    },
+  })
+}
+

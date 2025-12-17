@@ -5,12 +5,14 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs))
 }
 
-export const duplicateValidation = (arr: string[], el: string) => {
-  if (!arr.find((t) => t === el)) {
-    arr.push(el)
-    return arr
-  } else {
-    arr = arr.filter((t) => t !== el)
-    return arr
+export const duplicateValidation = <T>(
+  arr: T[],
+  el: T
+): T[] => {
+  if (!arr.includes(el)) {
+    return [...arr, el]
   }
+
+  return arr.filter((t) => t !== el)
 }
+
