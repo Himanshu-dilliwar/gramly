@@ -12,6 +12,7 @@ import { useDispatch } from "react-redux"
 import { useAppSelector } from "@/redux/store"
 import { TRIGGER } from "@/redux/slices/automation"
 import { saveTrigger } from "@/actions/automations"
+import { deleteKeyword } from "@/actions/automations"
 
 
 export const useCreateAutomation = () => {
@@ -187,38 +188,139 @@ export const useTriggers = (id: string) => {
 }
 
 
-
-export const useKeywords = (id: string) => {
+export const useKeywords = (automationId: string) => {
   const queryClient = useQueryClient()
   const [keyword, setKeyword] = useState("")
 
-  const mutation = useMutation({
-    mutationKey: ["add-keyword", id],
-    mutationFn: (keyword: string) =>
-      saveKeyword(id, keyword),
-    onSuccess: () => {
+  /* =====================
+     ADD KEYWORD (OPTIMISTIC)
+     ===================== */
+  const addMutation = useMutation({
+    mutationKey: ["add-keyword", automationId],
+    mutationFn: (word: string) =>
+      saveKeyword(automationId, word),
+
+    onMutate: async (word) => {
       setKeyword("")
+
+      await queryClient.cancelQueries({
+        queryKey: ["automation-info", automationId],
+      })
+
+      const previousData = queryClient.getQueryData<any>([
+        "automation-info",
+        automationId,
+      ])
+
+      queryClient.setQueryData(
+        ["automation-info", automationId],
+        (old: any) => {
+          if (!old?.data) return old
+
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              keywords: [
+                ...old.data.keywords,
+                {
+                  id: `temp-${Date.now()}`,
+                  word,
+                  automationId,
+                },
+              ],
+            },
+          }
+        }
+      )
+
+      return { previousData }
+    },
+
+    onError: (_err, _word, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["automation-info", automationId],
+          context.previousData
+        )
+      }
+    },
+
+    onSettled: () => {
       queryClient.invalidateQueries({
-        queryKey: ["automation-info", id],
+        queryKey: ["automation-info", automationId],
       })
     },
   })
 
+  /* =====================
+     DELETE KEYWORD (OPTIMISTIC)
+     ===================== */
+  const deleteMutation = useMutation({
+    mutationKey: ["delete-keyword", automationId],
+    mutationFn: (keywordId: string) =>
+      deleteKeyword(keywordId),
+
+    onMutate: async (keywordId) => {
+      await queryClient.cancelQueries({
+        queryKey: ["automation-info", automationId],
+      })
+
+      const previousData = queryClient.getQueryData<any>([
+        "automation-info",
+        automationId,
+      ])
+
+      queryClient.setQueryData(
+        ["automation-info", automationId],
+        (old: any) => {
+          if (!old?.data) return old
+
+          return {
+            ...old,
+            data: {
+              ...old.data,
+              keywords: old.data.keywords.filter(
+                (k: any) => k.id !== keywordId
+              ),
+            },
+          }
+        }
+      )
+
+      return { previousData }
+    },
+
+    onError: (_err, _id, context) => {
+      if (context?.previousData) {
+        queryClient.setQueryData(
+          ["automation-info", automationId],
+          context.previousData
+        )
+      }
+    },
+
+    onSettled: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["automation-info", automationId],
+      })
+    },
+  })
+
+  /* =====================
+     INPUT HANDLERS
+     ===================== */
   const onValueChange = (
     e: React.ChangeEvent<HTMLInputElement>
-  ) => {
-    setKeyword(e.target.value)
-  }
+  ) => setKeyword(e.target.value)
 
   const onKeyPress = (
     e: React.KeyboardEvent<HTMLInputElement>
   ) => {
     if (e.key === "Enter") {
       e.preventDefault()
-
       if (!keyword.trim()) return
-
-      mutation.mutate(keyword.trim())
+      addMutation.mutate(keyword.trim())
     }
   }
 
@@ -226,6 +328,8 @@ export const useKeywords = (id: string) => {
     keyword,
     onValueChange,
     onKeyPress,
-    isPending: mutation.isPending,
+    deleteKeyword: deleteMutation.mutate,
+    isAdding: addMutation.isPending,
+    isDeleting: deleteMutation.isPending,
   }
 }

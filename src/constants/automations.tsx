@@ -47,7 +47,7 @@ export const AUTOMATION_TRIGGERS: AutomationsTriggerProps[] = [
   },
   {
     id: "dm",
-    label: "Replies to my DMs",
+    label: "User Replies to my DMs with a keyword",
     icon: <PlaneBlue/>,
     description: "Select if you want to automate DMs on your profile",
     type: "DM",

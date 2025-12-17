@@ -2,24 +2,42 @@
 
 import { currentUser } from "@clerk/nextjs/server";
 import { redirect } from "next/navigation";
-import type { User } from "@clerk/nextjs/server";
 
 import { createUser, findUser } from "./queries";
 import { refreshToken } from "@/lib/fetch";
 import { updateIntegration } from "../integrations/queries";
 
 /* ---------------- CURRENT USER ---------------- */
+import { client } from "@/lib/prisma"
+import { User } from "@prisma/client"
 
-export const onCurrentUser = async (): Promise<User> => {
-  const user = await currentUser();
-  if (!user) redirect("/sign-in");
-  return user;
-};
+export const getDbUser = async (): Promise<User> => {
+  const clerkUser = await getClerkUser()
+
+  const dbUser = await client.user.findUnique({
+    where: {
+      clerkId: clerkUser.id,
+    },
+  })
+
+  if (!dbUser) {
+    throw new Error("User not found in database")
+  }
+
+  return dbUser
+}
+
+//clerk user
+export const getClerkUser = async () => {
+  const user = await currentUser()
+  if (!user) redirect("/sign-in")
+  return user
+}
 
 /* ---------------- ONBOARD USER ---------------- */
 
 export const onBoardUser = async () => {
-  const clerkUser = await onCurrentUser();
+  const clerkUser = await getClerkUser();
 
   try {
     /* ---------- FIND USER ---------- */
@@ -90,7 +108,7 @@ export const onBoardUser = async () => {
 };
 
 export const onUserInfo = async() => {
-  const user = await onCurrentUser()
+  const user = await getClerkUser()
   try {
     const profile = await findUser(user.id)
     if (profile) return {status:200, data:profile}

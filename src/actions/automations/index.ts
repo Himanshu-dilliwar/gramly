@@ -1,13 +1,13 @@
 'use server'
 
 import { CreateAutomationPayload } from '@/types/automation'
-import { onCurrentUser } from '../user'
+import { getClerkUser, getDbUser} from '../user'
 import { getAutomations,createAutomation, findAutomation, addListener, addTrigger, addKeyword} from './queries'
 import { client } from '@/lib/prisma'
 
 export const createAutomations = async (payload:CreateAutomationPayload) => {
   try {
-    const user = await onCurrentUser()
+    const user = await getClerkUser()
 
     if (!user?.id) {
       throw new Error('Unauthorized')
@@ -31,7 +31,7 @@ export const createAutomations = async (payload:CreateAutomationPayload) => {
 
 export const getAllAutomations = async () => {
   try {
-    const user = await onCurrentUser()
+    const user = await getClerkUser()
 
     if (!user?.id) {
       throw new Error('Unauthorized')
@@ -52,33 +52,36 @@ export const getAllAutomations = async () => {
   }
 }
 
-export const getAutomationInfo = async (id: string) => {
-  const user = await onCurrentUser()
 
+export const getAutomationInfo = async (id: string) => {
   try {
+    const user = await getDbUser()
+
     const automation = await findAutomation(id, user.id)
 
     if (!automation) {
       return {
         success: false,
-        data: null,
         status: 404,
+        data: null,
       }
     }
 
     return {
       success: true,
+      status: 200,
       data: automation,
     }
   } catch (error) {
-    console.error(error)
+
     return {
       success: false,
-      data: null,
       status: 500,
+      data: null,
     }
   }
 }
+
 
 type UpdateAutomationPayload = {
   name?: string
@@ -90,7 +93,7 @@ export const updateAutomationName = async (
   automationId: string,
   data: UpdateAutomationPayload
 ) => {
-  const user = await onCurrentUser()
+  const user = await getClerkUser()
 
   try {
     const updatedAutomation = await client.automation.update({
@@ -123,7 +126,7 @@ export const saveListener = async (
   prompt: string,
   reply?: string
 ) => {
-  await onCurrentUser()
+  await getClerkUser()
 
   try {
     const created = await addListener(
@@ -153,7 +156,7 @@ export const saveTrigger = async (
   triggers: TriggerType[]
 ) => {
   try {
-    await onCurrentUser()
+    await getClerkUser()
 
     await addTrigger(automationId, triggers)
 
@@ -178,7 +181,7 @@ export const saveKeyword = async (
   keyword: string
 ) => {
   try {
-    await onCurrentUser()
+    await getClerkUser()
 
     if (!keyword.trim()) {
       return {
@@ -202,6 +205,32 @@ export const saveKeyword = async (
       success: false,
       status: 500,
       message: "Oops! Something went wrong",
+    }
+  }
+}
+
+// actions/delete-keyword.ts
+export const deleteKeyword = async (keywordId: string) => {
+  try {
+    await getClerkUser()
+
+    await client.keyword.delete({
+      where: {
+        id: keywordId,
+      },
+    })
+
+    return {
+      success: true,
+      status: 200,
+      message: "Keyword deleted",
+    }
+  } catch (error) {
+    console.error(error)
+    return {
+      success: false,
+      status: 500,
+      message: "Failed to delete keyword",
     }
   }
 }
