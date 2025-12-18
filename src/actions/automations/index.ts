@@ -2,8 +2,9 @@
 
 import { CreateAutomationPayload } from '@/types/automation'
 import { getClerkUser, getDbUser} from '../user'
-import { getAutomations,createAutomation, findAutomation, addListener, addTrigger, addKeyword} from './queries'
+import { getAutomations,createAutomation, findAutomation, addListener, addTrigger, addKeyword, addPost} from './queries'
 import { client } from '@/lib/prisma'
+import { findUser } from '../user/queries'
 
 export const createAutomations = async (payload:CreateAutomationPayload) => {
   try {
@@ -234,3 +235,71 @@ export const deleteKeyword = async (keywordId: string) => {
     }
   }
 }
+
+
+export const getProfilePosts = async () => {
+  const user = await getClerkUser()
+
+  try {
+    const profile = await findUser(user.id)
+
+    const posts = await fetch(
+      `${process.env.INSTAGRAM_BASE_URL}/me/media?fields=id,caption,media_url,media_type,timestamp&limit=10&access_token=${profile?.integrations[0].token}`
+    )
+
+    const parsed = await posts.json()
+
+    if (parsed) {
+      return {
+        status: 200,
+        data: parsed,
+      }
+    }
+
+    console.log("🔴 Error in getting posts")
+    return { status: 404 }
+  } catch (error) {
+    console.log("🔴 server side Error in getting posts", error)
+    return { status: 500 }
+  }
+}
+
+type SavePostsPayload = {
+  automationId: string
+  posts: {
+    postid: string
+    caption?: string
+    media: string
+    mediaType: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM'
+  }[]
+}
+
+export const savePosts = async ({
+  automationId,
+  posts,
+}: SavePostsPayload) => {
+  const user = await getDbUser()
+  try {
+    const created = await addPost(automationId, user.id, posts) // ✅ await
+
+    if (!created) {
+      return {
+        status: 404,
+        data: "Automation not found",
+      }
+    }
+
+    return {
+      status: 200,
+      data: "Posts attached",
+    }
+  } catch (error) {
+    console.error("savePosts error:", error)
+
+    return {
+      status: 500,
+      data: "Oops! something went wrong",
+    }
+  }
+}
+

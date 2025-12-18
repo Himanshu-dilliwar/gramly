@@ -1,5 +1,5 @@
 "use client"
-import { createAutomations, saveListener, updateAutomationName } from "@/actions/automations"
+import { createAutomations, saveListener, savePosts, updateAutomationName } from "@/actions/automations"
 import { useMutationData } from "./use-mutations"
 import { CreateAutomationPayload } from "@/types/automation"
 import { useEffect, useRef, useState } from "react"
@@ -331,5 +331,55 @@ export const useKeywords = (automationId: string) => {
     deleteKeyword: deleteMutation.mutate,
     isAdding: addMutation.isPending,
     isDeleting: deleteMutation.isPending,
+  }
+}
+
+
+
+export type SavePostsPayload = {
+  automationId: string
+  posts: {
+    postid: string
+    caption?: string
+    media: string
+    mediaType: "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM"
+  }[]
+}
+
+export const useAutomationPosts = (automationId: string) => {
+  const [posts, setPosts] = useState<SavePostsPayload["posts"]>([])
+
+  /* ---------------- TOGGLE POST ---------------- */
+  const onSelectPost = (post: SavePostsPayload["posts"][number]) => {
+    setPosts((prev) =>
+      prev.some((p) => p.postid === post.postid)
+        ? prev.filter((p) => p.postid !== post.postid)
+        : [...prev, post]
+    )
+  }
+
+  /* ---------------- MUTATION ---------------- */
+  const { mutate, isPending } = useMutationData<
+  SavePostsPayload,                  // ✅ VARIABLES
+  { status: number; data: string }   // ✅ RESPONSE
+>(
+  ["attach-posts", automationId],
+  savePosts,
+  "automation-info"
+)
+
+
+
+  /* ---------------- SAVE HANDLER ---------------- */
+  const saveSelectedPosts = () => {
+    if (!posts.length) return
+    mutate({ automationId, posts })
+  }
+
+  return {
+    posts,
+    onSelectPost,
+    saveSelectedPosts,
+    isPending,
   }
 }

@@ -119,7 +119,6 @@ export const addListener = async (
 }
 
 type TriggerType = "COMMENT" | "DM"
-
 export const addTrigger = async (
   automationId: string,
   triggers: TriggerType[]
@@ -167,3 +166,32 @@ export const addKeyword = async (
   })
 }
 
+
+export const addPost = async (
+  id: string,
+  userId: string,
+  posts: {
+    postid: string
+    caption?: string
+    media: string
+    mediaType: "IMAGE" | "VIDEO" | "CAROUSEL_ALBUM"
+  }[]
+) => {
+  return await client.automation.update({
+    where: {
+      id,
+      userId,
+    },
+    data: {
+      posts: {
+        createMany: {
+          data: posts.map((post) => ({
+            ...post,
+            userId,        // ✅ REQUIRED
+          })),
+          skipDuplicates: true,
+        },
+      },
+    },
+  })
+}

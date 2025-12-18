@@ -1,38 +1,39 @@
-"use client"
+"use client";
 
-import { useQueryAutomation } from "@/hooks/user-queries"
-import { Separator } from "@/components/ui/separator"
-import  PlaneBlue from "@/icons/PlainBlue.svg"
-import React from "react"
-import { BotMessageSquare, CircleAlert } from "lucide-react"
-import PostButton from "../posts"
+import { useQueryAutomation } from "@/hooks/user-queries";
+import { Separator } from "@/components/ui/separator";
+import PlaneBlue from "@/icons/PlainBlue.svg";
+import React from "react";
+import { BotMessageSquare, CircleAlert } from "lucide-react";
+import PostButton from "../posts";
 
 type Props = {
-  id: string
-}
+  id: string;
+};
 
 const ThenNode = ({ id }: Props) => {
-  const { data } = useQueryAutomation(id)
+  const { data } = useQueryAutomation(id);
 
-  const listener = data?.data?.listener
-  const triggers = data?.data?.trigger ?? []
+  const listener = data?.data?.listener;
+  const triggers = data?.data?.trigger ?? [];
 
   // Find if COMMENT trigger exists (used for warning)
-  const commentTrigger = triggers.find(
-    (t) => t.type === "COMMENT"
-  )
+  const commentTrigger = triggers.find((t) => t.type === "COMMENT");
 
   // If no listener yet, don't render Then node
-  if (!listener) return null
+  if (!listener) return null;
 
   return (
-    <div className="w-full flex justify-center relative">
+    <div className="relative w-full flex justify-center">
       {/* CONNECTOR */}
-      <div className="absolute h-20 left-1/2 -top-6 bottom-full flex flex-col items-center z-50">
+      <div className="absolute left-1/2 -translate-x-1/2 -top-8 flex flex-col items-center">
+        {/* DOT */}
         <span className="h-[9px] w-[9px] bg-connector/10 rounded-full" />
+
+        {/* LINE */}
         <Separator
           orientation="vertical"
-          className="h-6 bottom-full flex-1 border-[1px] border-connector/10"
+          className="h-8 border-l border-connector/10 transition-all duration-300"
         />
       </div>
 
@@ -41,9 +42,7 @@ const ThenNode = ({ id }: Props) => {
         {/* HEADER */}
         <div className="flex gap-x-2 items-center">
           <CircleAlert />
-          <p className="text-sm text-text-secondary">
-            Then…
-          </p>
+          <p className="text-sm text-text-secondary">Then…</p>
         </div>
 
         {/* CONTENT */}
@@ -52,7 +51,7 @@ const ThenNode = ({ id }: Props) => {
             {listener.listener === "MESSAGE" ? (
               <PlaneBlue />
             ) : (
-              <BotMessageSquare/>
+              <BotMessageSquare />
             )}
 
             <p className="text-lg text-white">
@@ -77,9 +76,11 @@ const ThenNode = ({ id }: Props) => {
           )}
         </div>
       </div>
-      {/* {data.data.posts.length > 0 ? <></> : commentTrigger ? <PostButton/>: <></>} */}
-    </div>
-  )
-}
+      {data?.data?.posts?.length === 0 && commentTrigger && (<PostButton id={id} />)}
 
-export default ThenNode
+      
+    </div>
+  );
+};
+
+export default ThenNode;
