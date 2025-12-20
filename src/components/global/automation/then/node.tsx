@@ -26,16 +26,16 @@ const ThenNode = ({ id }: Props) => {
   return (
     <div className="relative w-full flex justify-center">
       {/* CONNECTOR */}
-      <div className="absolute left-1/2 -translate-x-1/2 -top-8 flex flex-col items-center">
-        {/* DOT */}
-        <span className="h-[9px] w-[9px] bg-connector/10 rounded-full" />
-
-        {/* LINE */}
-        <Separator
-          orientation="vertical"
-          className="h-8 border-l border-connector/10 transition-all duration-300"
-        />
-      </div>
+      <div className="absolute h-20 left-1/2 bottom-full flex flex-col items-center z-50">
+              <span className="h-[9px] w-[9px] bg-connector/10 rounded-full" />
+      
+              <Separator
+                orientation="vertical"
+                className="bottom-full flex-1 border-[1px] border-connector/10"
+              />
+      
+              <span className="h-[9px] w-[9px] bg-connector/10 rounded-full" />
+            </div>
 
       {/* THEN NODE */}
       <div className="w-full lg:w-10/12 xl:w-6/12 p-5 rounded-xl bg-[#1D1D1D] flex flex-col gap-y-4">
@@ -76,7 +76,8 @@ const ThenNode = ({ id }: Props) => {
           )}
         </div>
       </div>
-      {data?.data?.posts?.length === 0 && commentTrigger && (<PostButton id={id} />)}
+        {/* himanshu wip */}
+      {/* {data?.data?.posts?.length === 0 && commentTrigger && (<PostButton id={id} />)} */}
 
       
     </div>

@@ -1,6 +1,6 @@
 "use client"
 
-import InstagramBlue from "@/icons/instagramBlue.svg"
+import InstagramBlue from "@/icons/InstagramBlue.svg"
 import PlainBlue from "@/icons/plainBlue.svg"
 
 type Props = {

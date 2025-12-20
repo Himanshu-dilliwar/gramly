@@ -49,7 +49,7 @@ const InfoBar = ({ slug }: Props) => {
                   <p className="text-[#9B9CA0]">Help</p>
                 </div>
 
-                <SubscriptionPlans>
+                <SubscriptionPlans type="FREE">
                   <div className="mt-auto">
                     <UpgradeCard />
                   </div>

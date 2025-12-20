@@ -12,7 +12,7 @@ const SubscriptionPlans = ({ children, type }: Props) => {
   if (isLoading) return null
 
   const plan = data?.data?.subscription?.plan
-
+  
   if (plan !== type) return null
 
   return <>{children}</>

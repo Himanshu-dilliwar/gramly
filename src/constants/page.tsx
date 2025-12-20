@@ -31,7 +31,7 @@ export const PAGE_LABEL: Record<Page, string> = {
   settings: "Settings",
 };
 
- export const PLANS = [
+export const PLANS = [
     {
       id: 1,
       name: 'Starter plan',

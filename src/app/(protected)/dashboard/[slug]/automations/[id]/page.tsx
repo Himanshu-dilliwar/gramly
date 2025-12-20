@@ -1,5 +1,6 @@
 
 import { getAutomationInfo } from "@/actions/automations";
+import PostNode from "@/components/global/automation/posts/node";
 import ThenNode from "@/components/global/automation/then/node";
 import Trigger from "@/components/global/automation/trigger";
 import AutomationBreadCrumb from "@/components/global/bread-crumb/automations";
@@ -37,6 +38,7 @@ const Page = async ({ params }: Props) => {
           <Trigger id={params.id} />
         </div>
         <ThenNode id={params.id}/>
+        {/* <PostNode id={params.id}/> */}
       </div>
       </HydrationBoundary>
   

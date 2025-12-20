@@ -14,7 +14,7 @@ const CreateAutomation = () => {
   onClick={() =>
         mutate({
   name: 'Untitled',
-  keywords: ['getstarted', 'yes'],
+  keywords: [],
 })
       }
 >

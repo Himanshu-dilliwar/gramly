@@ -1,12 +1,25 @@
-import React from 'react'
-import PaymentCard from './payment-card'
+"use client"
+import { useQueryUser } from "@/hooks/user-queries";
+import PaymentCard from "./payment-card";
 
-type Props = {}
+const Billing = () => {
+  const { data } = useQueryUser();
 
-const Billing = (props: Props) => {
+  const currentPlan = data?.data?.subscription?.plan ?? "FREE";
+
   return (
-    <PaymentCard label="FREE" current="FREE" />
-  )
-}
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+      <PaymentCard
+        label="FREE"
+        current={currentPlan}
+      />
 
-export default Billing
+      <PaymentCard
+        label="PRO"
+        current={currentPlan}
+      />
+    </div>
+  );
+};
+
+export default Billing;

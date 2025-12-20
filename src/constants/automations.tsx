@@ -1,5 +1,5 @@
 import PlaneBlue from "@/icons/plainBlue.svg"
-import InstagramBlue from "@/icons/instagramBlue.svg"
+import InstagramBlue from "@/icons/InstagramBlue.svg"
 import { BotMessageSquare } from "lucide-react"
 import { ReactNode } from "react"
 

@@ -2,7 +2,7 @@
 
 import { CreateAutomationPayload } from '@/types/automation'
 import { getClerkUser, getDbUser} from '../user'
-import { getAutomations,createAutomation, findAutomation, addListener, addTrigger, addKeyword, addPost} from './queries'
+import { getAutomations,createAutomation, findAutomation, addListener, addTrigger, addKeyword, addPost, updateAutomation} from './queries'
 import { client } from '@/lib/prisma'
 import { findUser } from '../user/queries'
 
@@ -273,7 +273,6 @@ type SavePostsPayload = {
     mediaType: 'IMAGE' | 'VIDEO' | 'CAROUSEL_ALBUM'
   }[]
 }
-
 export const savePosts = async ({
   automationId,
   posts,
@@ -303,3 +302,32 @@ export const savePosts = async ({
   }
 }
 
+export const activateAutomation = async (
+  id: string,
+  state: boolean
+) => {
+  await getClerkUser()
+  try {
+    const update = await updateAutomation(id,{active:state})
+
+    if (update) {
+      return {
+        success: true,
+        status: 200,
+        data: `Automation ${state? "activated" : "disabled"}`,
+      }
+    }
+    return{
+      success: false,
+      status: 400,
+      message: "automation not found"}
+  } catch (error) {
+    console.error(error)
+
+    return {
+      success: false,
+      status: 500,
+      message: "Oops! Something went wrong",
+    }
+  }
+}

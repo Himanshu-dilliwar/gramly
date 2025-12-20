@@ -43,7 +43,7 @@ const Sidebar = ({ slug }: Props) => {
           </div>
 
           {/*subscription plan */}
-          <SubscriptionPlans>
+          <SubscriptionPlans type="FREE">
             <div className="flex-1 flex flex-col justify-end">
                 <UpgradeCard/>
 
