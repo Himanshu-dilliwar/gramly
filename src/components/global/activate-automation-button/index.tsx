@@ -3,7 +3,7 @@
 import React from "react";
 import { Button } from "@/components/ui/button";
 import Loader from "@/components/global/loder";
-import { Repeat } from "lucide-react";
+import { Loader2, Repeat } from "lucide-react";
 import { useQueryAutomation } from "@/hooks/user-queries";
 import { useMutationData } from "@/hooks/use-mutations";
 import { activateAutomation } from "@/actions/automations";

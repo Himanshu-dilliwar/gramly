@@ -23,7 +23,6 @@ type CreateUserProps = {
   lastname?: string | null
   email: string
 }
-
 export const createUser = async ({
   clerkId,
   firstname,
@@ -44,6 +43,35 @@ export const createUser = async ({
       id: true,
       firstname: true,
       lastname: true,
+    },
+  })
+}
+
+export const updateSubscription = async (
+  clerkId: string,
+  data: {
+    razorpaySubId: string
+    plan: "PRO" | "FREE"
+    status: "ACTIVE" | "CANCELLED" | "PENDING"
+  }
+) => {
+  return client.user.update({
+    where: { clerkId },
+    data: {
+      subscription: {
+        upsert: {
+          create: {
+            razorpaySubId: data.razorpaySubId,
+            plan: data.plan,
+            status: data.status,
+          },
+          update: {
+            razorpaySubId: data.razorpaySubId,
+            plan: data.plan,
+            status: data.status,
+          },
+        },
+      },
     },
   })
 }

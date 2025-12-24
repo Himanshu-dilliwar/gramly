@@ -50,9 +50,9 @@ const InfoBar = ({ slug }: Props) => {
                 </div>
 
                 <SubscriptionPlans type="FREE">
-                  <div className="mt-auto">
-                    <UpgradeCard />
-                  </div>
+                  
+                  <UpgradeCard />
+                
                 </SubscriptionPlans>
               </div>
             </div>

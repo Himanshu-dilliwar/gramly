@@ -8,10 +8,11 @@ type Props = {
 
 const SubscriptionPlans = ({ children, type }: Props) => {
   const { data, isLoading } = useQueryUser()
+  console.log("PLAN:", data?.data?.subscription?.plan, "EXPECTED:", type)
 
   if (isLoading) return null
 
-  const plan = data?.data?.subscription?.plan
+  const plan = data?.data?.subscription?.plan ?? "FREE"
   
   if (plan !== type) return null
 

@@ -11,9 +11,16 @@ datasource db {
 /* ========== Enums ========== */
 
 enum SUBSCRIPTION_PLAN {
-  PRO
   FREE
+  PRO
 }
+
+enum SUBSCRIPTION_STATUS {
+  PENDING
+  ACTIVE
+  CANCELLED
+}
+
 
 enum INTEGRATIONS {
   INSTAGRAM
@@ -48,13 +55,17 @@ model User {
 }
 
 model Subscription {
-  id            String          @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
-  user          User?           @relation(fields: [userId], references: [id], onDelete: Cascade)
-  userId        String?         @unique @db.Uuid
-  plan          SUBSCRIPTION_PLAN @default(FREE)
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @default(now()) @updatedAt
-  customerId    String?         @unique
+  id                 String             @id @default(dbgenerated("gen_random_uuid()")) @db.Uuid
+  user               User?              @relation(fields: [userId], references: [id], onDelete: Cascade)
+  userId             String?             @unique @db.Uuid
+
+  plan               SUBSCRIPTION_PLAN   @default(FREE)
+  status             SUBSCRIPTION_STATUS @default(PENDING)
+
+  razorpaySubId      String?             @unique
+
+  createdAt          DateTime            @default(now())
+  updatedAt          DateTime            @default(now()) @updatedAt
 }
 
 model Integration {
