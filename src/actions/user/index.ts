@@ -34,6 +34,10 @@ export const getClerkUser = async () => {
   return user
 }
 
+export const onCurrentUser = async () => {
+  return await getClerkUser()
+}
+
 /* ---------------- ONBOARD USER ---------------- */
 
 export const onBoardUser = async () => {

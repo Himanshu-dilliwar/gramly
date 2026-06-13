@@ -14,7 +14,7 @@ const useSubscription = () => {
       const res = await axios.get("/api/payment")
 
       if (res.data.status !== 200) {
-        throw new Error("Failed to create subscription")
+        throw new Error(res.data.error || "Failed to create subscription")
       }
 
       // 2️⃣ Open Razorpay Checkout
@@ -33,9 +33,10 @@ const useSubscription = () => {
 
       const razorpay = new (window as any).Razorpay(options)
       razorpay.open()
-    } catch (error) {
+    } catch (error: any) {
       console.error("Subscription error:", error)
-      alert("Payment failed. Please try again.")
+      const errorMsg = error.response?.data?.error || error.message || "Payment failed. Please try again."
+      alert(`Payment failed: ${errorMsg}`)
     } finally {
       setIsProcessing(false)
     }
