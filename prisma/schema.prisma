@@ -125,6 +125,7 @@ model Keyword {
   automationId   String?     @db.Uuid
 
   @@unique([automationId, word])
+  @@index([automationId])
 }
 
 model Post {

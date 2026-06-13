@@ -29,3 +29,28 @@ export const refreshToken = async (token: string) => {
     throw new Error("Failed to refresh Instagram token");
   }
 };
+
+
+export const sendDm = async (
+  userId: string,
+  reciverId: string,
+  promt: string,
+  token: string
+)=> {
+  console.log("Sending Instagram DM to:", reciverId, "with prompt:", promt);
+
+  return axios.post(`${process.env.INSTAGRAM_BASE_URL}/v21.0/${userId}/messages`,{
+    reciverId:{
+      id: reciverId
+    },
+    message:{
+      text: promt
+    },
+  },
+{
+  headers:{
+    Authorization: `Bearer ${token}`,
+    'Content-Type': 'application/json'
+  }
+})
+}

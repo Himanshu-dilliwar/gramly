@@ -1,6 +1,8 @@
 'use client';
 
 import React, { useState } from 'react';
+import Link from 'next/link';
+import { SignedIn, SignedOut, UserButton } from '@clerk/nextjs';
 import { Button } from '@/components/ui/button';
 import { ChevronDown } from 'lucide-react';
 import Logo from './logo';
@@ -14,7 +16,7 @@ const Header: React.FC = () => {
     setActiveSubmenu((s) => (s === submenu ? null : submenu));
 
   return (
-    <header className="w-full">
+    <header className="w-full bg-white border-b border-gray-100">
       <div className="max-w-[1440px] mx-auto px-4 sm:px-6 lg:px-8">
         <div className="flex justify-between items-center mt-2 md:mt-4 mr-8 md:mr-16 ml-8 md:ml-16">
           {/* Logo */}
@@ -109,13 +111,34 @@ const Header: React.FC = () => {
 
               {/* Actions */}
               <div className="flex flex-col lg:flex-row gap-2 lg:gap-4 items-center w-full lg:w-auto mt-4 lg:mt-0">
-                <Button variant="ghost" className="w-full lg:w-auto hover:bg-gray-50">
-                  Login
-                </Button>
+                <SignedOut>
+                  <Link href="/sign-in" passHref className="w-full lg:w-auto">
+                    <Button variant="ghost" className="w-full lg:w-auto text-black hover:bg-gray-50">
+                      Login
+                    </Button>
+                  </Link>
 
-                <Button variant="default" className="w-full lg:w-auto bg-black text-white">
-                  Start
-                </Button>
+                  <Link href="/sign-up" passHref className="w-full lg:w-auto">
+                    <Button variant="default" className="w-full lg:w-auto bg-black text-white">
+                      Start
+                    </Button>
+                  </Link>
+                </SignedOut>
+
+                <SignedIn>
+                  <Link href="/dashboard" passHref className="w-full lg:w-auto">
+                    <Button variant="ghost" className="w-full lg:w-auto text-black hover:bg-gray-50">
+                      Dashboard
+                    </Button>
+                  </Link>
+                  <UserButton
+                    appearance={{
+                      elements: {
+                        avatarBox: 'w-9 h-9',
+                      },
+                    }}
+                  />
+                </SignedIn>
               </div>
             </div>
           </nav>

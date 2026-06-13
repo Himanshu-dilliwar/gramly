@@ -19,7 +19,10 @@ export const useCreateAutomation = () => {
   const { mutate, isPending } = useMutationData<CreateAutomationPayload, any>(
     ['create-automation'],
     (payload) => createAutomations(payload),
-    'user-automations'
+    'user-automations',
+    () => {
+      window.location.reload()
+    }
   )
 
   return { mutate, isPending }

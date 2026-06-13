@@ -17,6 +17,7 @@ export const createAutomations = async (payload:CreateAutomationPayload) => {
     const automation = await createAutomation(user.id,payload)
 
     return {
+      status: 200,
       success: true,
       data: automation,
     }

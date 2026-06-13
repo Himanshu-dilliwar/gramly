@@ -1,7 +1,7 @@
 import React from "react";
 import { Instagram, Database, MessageCircle, } from "lucide-react";
 
-export type IntegrationStrategy = "INSTAGRAM" | "WhatsApp" | "CRM";
+export type IntegrationStrategy = "INSTAGRAM" | "WHATSAPP"; ;
 
 type IntegrationCard = {
   title: string;
@@ -23,7 +23,7 @@ export const INTEGRATION_CARDS: IntegrationCard[] = [
     description:
       "Lorem ipsum dolor sit amet consectetur. Mauris scelerisque tincidunt ultrices.",
     icon: <MessageCircle className="text-[#00A1E0]" size={28} />,
-    strategy: "WhatsApp",
+    strategy: "WHATSAPP",
   },
   // {
   //   title: "Connect Salesforece",
